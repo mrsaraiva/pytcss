@@ -1,0 +1,81 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+.kotlin
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.run/
+.intellijPlatform/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# =========================
+# AI / Coding Agent Tools
+# =========================
+# Codex CLI / OpenAI CLI
+.codex/
+.codex_config.json
+codex.log
+
+# Gemini CLI / Vertex AI
+.gemini/
+gemini_config.json
+gemini.log
+
+# Claude / Anthropic CLI
+.claude/
+claude_config.json
+claude.log
+
+# LangChain / LlamaIndex
+.langchain/
+.llamaindex/
+*.lc_cache
+*.llm_cache
+
+# Agent-based repos
+temp_lab_repos/
+.agent_cache/
+.agent_runs/
+*.agent.log
+
+# Agent documentation
+Agent*.md
+CLAUDE*.md
+GEMINI*.md
+
+# Development documentation (local only)
+docs/devel/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+/.idea/

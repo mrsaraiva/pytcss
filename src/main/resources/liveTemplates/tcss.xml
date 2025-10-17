@@ -1,0 +1,16 @@
+<templateSet group="TCSS">
+    <template name="rule" value="$SELECTOR$ {&#10;    $PROPERTY$&#10;}" description="TCSS rule block" toReformat="true" toShortenFQNames="true">
+        <variable name="SELECTOR" expression="" defaultValue="Widget" alwaysStopAt="true" />
+        <variable name="PROPERTY" expression="" defaultValue="property: value;" alwaysStopAt="true" />
+        <context>
+            <option name="TCSS" value="true" />
+        </context>
+    </template>
+    <template name="var" value="$$$NAME$: $COLOR$;" description="TCSS variable declaration" toReformat="true" toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="primary" alwaysStopAt="true" />
+        <variable name="COLOR" expression="" defaultValue="#ff0000" alwaysStopAt="true" />
+        <context>
+            <option name="TCSS" value="true" />
+        </context>
+    </template>
+</templateSet>
