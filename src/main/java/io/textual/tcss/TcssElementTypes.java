@@ -24,4 +24,8 @@ public interface TcssElementTypes {
     // Variable elements
     IElementType VARIABLE_DECLARATION = new TcssElementType("VARIABLE_DECLARATION");
     IElementType VARIABLE_REFERENCE = new TcssElementType("VARIABLE_REFERENCE");
+
+    // Grammar completeness element types (Phase 5.2)
+    IElementType INITIAL_KEYWORD_VALUE = new TcssElementType("INITIAL_KEYWORD_VALUE");
+    IElementType IMPORTANT_MODIFIER = new TcssElementType("IMPORTANT_MODIFIER");
 }

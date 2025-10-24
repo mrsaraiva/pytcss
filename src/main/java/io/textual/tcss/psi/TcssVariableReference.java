@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
+import java.util.Collection;
 
 /**
  * PSI element for variable references in property values: $variable-name
@@ -57,8 +58,8 @@ public class TcssVariableReference extends ASTWrapperPsiElement implements TcssC
     }
 
     /**
-     * Resolve the variable reference to a color.
-     * Delegates to VariableResolver for file-scope resolution.
+     * Resolve the variable reference to a color with cross-file support.
+     * Checks local file first (shadowing), then searches project-wide.
      *
      * @return Resolved color or null if:
      *         - Variable is undefined
@@ -75,7 +76,7 @@ public class TcssVariableReference extends ASTWrapperPsiElement implements TcssC
         }
 
         String variableName = getVariableName();
-        return VariableResolver.resolveColor(variableName, containingFile);
+        return VariableResolver.resolveColorCrossFile(variableName, containingFile);
     }
 
     @Override
@@ -109,7 +110,8 @@ public class TcssVariableReference extends ASTWrapperPsiElement implements TcssC
     }
 
     /**
-     * Find the declaration for this variable reference.
+     * Find the declaration for this variable reference with cross-file support.
+     * Checks local file first (shadowing), then searches project-wide.
      * Used by color picker to update the declaration instead of the reference.
      *
      * @return Variable declaration or null if not found
@@ -122,7 +124,17 @@ public class TcssVariableReference extends ASTWrapperPsiElement implements TcssC
         }
 
         String variableName = getVariableName();
-        return VariableResolver.findDeclaration(variableName, containingFile);
+
+        // Check local file first (shadowing)
+        TcssVariableDeclaration localDecl = VariableResolver.findDeclaration(variableName, containingFile);
+        if (localDecl != null) {
+            return localDecl;
+        }
+
+        // Fall back to cross-file search
+        Collection<TcssVariableDeclaration> crossFileDecls =
+                VariableResolver.findDeclarationsCrossFile(variableName, getProject());
+        return crossFileDecls.isEmpty() ? null : crossFileDecls.iterator().next();
     }
 
     private static class VariablePsiReference extends PsiReferenceBase<TcssVariableReference> {

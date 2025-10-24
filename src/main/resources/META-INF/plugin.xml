@@ -33,7 +33,18 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.python</depends>
 
+    <!-- Application services -->
     <extensions defaultExtensionNs="com.intellij">
+        <!-- Plugin settings -->
+        <applicationService
+            serviceImplementation="io.textual.tcss.settings.TcssPluginSettings"/>
+
+        <!-- Settings page -->
+        <applicationConfigurable
+            parentId="language"
+            instance="io.textual.tcss.settings.TcssSettingsConfigurable"
+            id="io.textual.tcss.settings"
+            displayName="Textual CSS"/>
         <!-- Register .tcss file type -->
         <fileType 
             name="Textual CSS" 
@@ -98,6 +109,18 @@
 
         <!-- Variable rename processor -->
         <renamePsiElementProcessor implementation="io.textual.tcss.refactoring.TcssVariableRenameProcessor"/>
+
+        <!-- Variable index for cross-file resolution -->
+        <fileBasedIndex implementation="io.textual.tcss.index.TcssVariableIndex"/>
+
+        <!-- Duplicate variable inspection -->
+        <localInspection
+            language="TCSS"
+            displayName="Duplicate variable declaration"
+            groupName="TCSS"
+            enabledByDefault="true"
+            level="WARNING"
+            implementationClass="io.textual.tcss.inspection.TcssDuplicateVariableInspection"/>
     </extensions>
 
     <actions>

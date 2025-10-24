@@ -4,6 +4,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import io.textual.tcss.TcssElementTypes;
 import io.textual.tcss.TcssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,5 +47,25 @@ public class TcssPropertyDeclaration extends ASTWrapperPsiElement {
     @Nullable
     public TcssPropertyValue getPropertyValue() {
         return PsiTreeUtil.getChildOfType(this, TcssPropertyValue.class);
+    }
+
+    /**
+     * Check if this property declaration has !important modifier.
+     *
+     * @return true if property is marked as !important
+     */
+    public boolean isImportant() {
+        return getImportantModifier() != null;
+    }
+
+    /**
+     * Get the !important modifier element if present.
+     *
+     * @return PsiElement for !important modifier, or null if not present
+     */
+    @Nullable
+    public PsiElement getImportantModifier() {
+        ASTNode node = getNode().findChildByType(TcssElementTypes.IMPORTANT_MODIFIER);
+        return node != null ? node.getPsi() : null;
     }
 }

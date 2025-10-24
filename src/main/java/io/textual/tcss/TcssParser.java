@@ -184,6 +184,24 @@ public class TcssParser implements PsiParser {
         // Parse property value
         parsePropertyValue(builder);
 
+        // Parse optional !important modifier before semicolon/rbrace
+        skipWhitespace(builder);
+        PsiBuilder.Marker importantMarker = builder.mark();
+        if (builder.getTokenType() == TcssTokenTypes.EXCLAMATION) {
+            builder.advanceLexer(); // consume !
+            skipWhitespace(builder);
+            if (builder.getTokenType() == TcssTokenTypes.IDENTIFIER &&
+                "important".equals(builder.getTokenText())) {
+                builder.advanceLexer(); // consume important
+                importantMarker.done(TcssElementTypes.IMPORTANT_MODIFIER);
+            } else {
+                builder.error("Expected 'important' after '!'");
+                importantMarker.drop();
+            }
+        } else {
+            importantMarker.drop();
+        }
+
         // Expect semicolon or closing brace
         skipWhitespace(builder);
         if (builder.getTokenType() == TcssTokenTypes.SEMICOLON) {
@@ -206,8 +224,10 @@ public class TcssParser implements PsiParser {
         while (!builder.eof()) {
             IElementType type = builder.getTokenType();
 
-            // Exit conditions
-            if (type == TcssTokenTypes.SEMICOLON || type == TcssTokenTypes.RBRACE) {
+            // Exit conditions - also exit on ! to allow parsing of !important modifier
+            if (type == TcssTokenTypes.SEMICOLON ||
+                type == TcssTokenTypes.RBRACE ||
+                type == TcssTokenTypes.EXCLAMATION) {
                 break;
             }
 
@@ -224,6 +244,8 @@ public class TcssParser implements PsiParser {
                 parseColorFunction(builder);
             } else if (type == TcssTokenTypes.COLOR_KEYWORD) {
                 parseColorKeyword(builder);
+            } else if (type == TcssTokenTypes.INITIAL_KEYWORD) {
+                parseInitialKeyword(builder);
             }
             // Parse variable references
             else if (type == TcssTokenTypes.VARIABLE) {
@@ -352,6 +374,20 @@ public class TcssParser implements PsiParser {
 
     private boolean tokenHasPercent(@Nullable String text) {
         return text != null && text.trim().endsWith("%");
+    }
+
+    /**
+     * Parse initial keyword: initial
+     * Grammar: initialKeyword ::= INITIAL_KEYWORD
+     */
+    private void parseInitialKeyword(@NotNull PsiBuilder builder) {
+        PsiBuilder.Marker keywordMarker = builder.mark();
+
+        if (builder.getTokenType() == TcssTokenTypes.INITIAL_KEYWORD) {
+            builder.advanceLexer();
+        }
+
+        keywordMarker.done(TcssElementTypes.INITIAL_KEYWORD_VALUE);
     }
 
     /**

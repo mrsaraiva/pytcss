@@ -1,0 +1,6 @@
+/* Theme Variables - This file also declares $primary (duplicate!) */
+
+$primary: #007bff;  /* NOTE: This duplicates $primary from colors.tcss - you should see a WARNING */
+$accent: #6c757d;
+$highlight: #ffeb3b;
+$shadow: rgba(0, 0, 0, 0.3);

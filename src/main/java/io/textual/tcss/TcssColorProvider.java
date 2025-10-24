@@ -14,10 +14,12 @@ import io.textual.tcss.psi.TcssColorValue;
 import io.textual.tcss.psi.TcssColorWithOpacityValue;
 import io.textual.tcss.psi.TcssVariableDeclaration;
 import io.textual.tcss.psi.TcssVariableReference;
+import io.textual.tcss.util.VariableResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
+import java.util.Collection;
 
 /**
  * Provides color preview gutter icons and color picker for TCSS color values.
@@ -106,7 +108,25 @@ public class TcssColorProvider implements ElementColorProvider {
             return null;
         }
 
-        TcssVariableDeclaration declaration = reference.resolveDeclaration();
+        String varName = reference.getVariableName();
+        PsiFile file = reference.getContainingFile();
+        if (file == null) {
+            return null;
+        }
+
+        // Check local file first (shadowing)
+        TcssVariableDeclaration declaration = VariableResolver.findDeclaration(varName, file);
+
+        // Fall back to cross-file search
+        if (declaration == null) {
+            Project project = reference.getProject();
+            Collection<TcssVariableDeclaration> crossFileDecls =
+                    VariableResolver.findDeclarationsCrossFile(varName, project);
+            if (!crossFileDecls.isEmpty()) {
+                declaration = crossFileDecls.iterator().next(); // Use first found
+            }
+        }
+
         if (declaration == null || !declaration.isValid()) {
             return null;
         }

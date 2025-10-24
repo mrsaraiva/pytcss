@@ -1,7 +1,10 @@
 package io.textual.tcss.util;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import io.textual.tcss.index.TcssVariableIndex;
 import io.textual.tcss.psi.TcssColorValue;
 import io.textual.tcss.psi.TcssVariableDeclaration;
 import io.textual.tcss.psi.TcssVariableReference;
@@ -191,6 +194,118 @@ public class VariableResolver {
                 result.add(reference);
             }
         }
+        return result;
+    }
+
+    // ========== Cross-File Resolution Methods ==========
+
+    /**
+     * Resolve variable color with cross-file support.
+     * Checks local file first (shadowing), then searches project-wide.
+     *
+     * @param variableName Variable name (without $)
+     * @param contextFile File containing the reference
+     * @return Resolved color or null
+     */
+    @Nullable
+    public static Color resolveColorCrossFile(@NotNull String variableName, @NotNull PsiFile contextFile) {
+        if (variableName.isEmpty()) {
+            return null;
+        }
+
+        // 1. Check local file first (shadowing semantics)
+        TcssVariableDeclaration localDecl = findDeclaration(variableName, contextFile);
+        if (localDecl != null) {
+            Set<String> visited = new HashSet<>();
+            return resolveColorRecursive(localDecl, visited, 0);
+        }
+
+        // 2. Search project-wide via index
+        Project project = contextFile.getProject();
+        GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+        Collection<TcssVariableDeclaration> declarations =
+                TcssVariableIndex.findDeclarations(variableName, project, scope);
+
+        // Return first valid color (arbitrary but deterministic order)
+        for (TcssVariableDeclaration decl : declarations) {
+            Set<String> visited = new HashSet<>();
+            Color color = resolveColorRecursive(decl, visited, 0);
+            if (color != null) {
+                return color;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find all declarations of a variable across the entire project.
+     * Used for conflict detection and validation.
+     *
+     * @param variableName Variable name (without $)
+     * @param project Current project
+     * @return All declarations with this name across all files
+     */
+    @NotNull
+    public static Collection<TcssVariableDeclaration> findDeclarationsCrossFile(
+            @NotNull String variableName,
+            @NotNull Project project) {
+        if (variableName.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+        return TcssVariableIndex.findDeclarations(variableName, project, scope);
+    }
+
+    /**
+     * Get all variable declarations across the project.
+     * Returns a map of variable name → collection of declarations.
+     * Used for project-wide completion.
+     *
+     * <p>Optimized to load each file only once, even if it declares multiple variables.
+     *
+     * @param project Current project
+     * @return Map of variable name to all declarations with that name
+     */
+    @NotNull
+    public static Map<String, Collection<TcssVariableDeclaration>> getAllDeclarationsCrossFile(
+            @NotNull Project project) {
+        Map<String, Collection<TcssVariableDeclaration>> result = new LinkedHashMap<>();
+
+        // Get all variable names and collect unique files
+        Collection<String> varNames = TcssVariableIndex.getAllVariableNames(project);
+        GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+        Set<com.intellij.openapi.vfs.VirtualFile> allFiles = new HashSet<>();
+
+        // Collect all files that declare any variable
+        for (String varName : varNames) {
+            Collection<com.intellij.openapi.vfs.VirtualFile> files =
+                    TcssVariableIndex.getFilesDeclaringVariable(varName, scope);
+            allFiles.addAll(files);
+        }
+
+        // Load each file once and extract all declarations
+        com.intellij.psi.PsiManager psiManager = com.intellij.psi.PsiManager.getInstance(project);
+        for (com.intellij.openapi.vfs.VirtualFile virtualFile : allFiles) {
+            PsiFile psiFile = psiManager.findFile(virtualFile);
+            if (psiFile == null) {
+                continue;
+            }
+
+            // Get all declarations from this file
+            Collection<TcssVariableDeclaration> declarations =
+                    PsiTreeUtil.findChildrenOfType(psiFile, TcssVariableDeclaration.class);
+
+            // Group by variable name
+            for (TcssVariableDeclaration decl : declarations) {
+                String varName = decl.getVariableName();
+                if (!varName.isEmpty()) {
+                    result.computeIfAbsent(varName, k -> new ArrayList<>()).add(decl);
+                }
+            }
+        }
+
         return result;
     }
 }

@@ -32,4 +32,8 @@ public interface TcssTokenTypes {
     IElementType LPAREN = new TcssTokenType("LPAREN");
     IElementType RPAREN = new TcssTokenType("RPAREN");
     IElementType COLON = new TcssTokenType("COLON");
+
+    // Grammar completeness tokens (Phase 5.2)
+    IElementType EXCLAMATION = new TcssTokenType("EXCLAMATION");
+    IElementType INITIAL_KEYWORD = new TcssTokenType("INITIAL_KEYWORD");
 }

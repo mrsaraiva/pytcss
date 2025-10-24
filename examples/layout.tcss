@@ -1,0 +1,32 @@
+/* Layout Stylesheet - Demonstrates LOCAL SHADOWING */
+
+/* Local override: This $primary shadows the one from colors.tcss and theme.tcss */
+/* Within THIS file only, $primary will be RED instead of blue/other colors */
+$primary: #ff0000;
+
+/* Local spacing variables (only exist in this file) */
+$spacing-small: 8px;
+$spacing-medium: 16px;
+$spacing-large: 24px;
+
+Container {
+    background: $primary;  /* RED! Local variable shadows cross-file ones */
+    border: solid $border;  /* Still uses cross-file $border from colors.tcss */
+}
+
+Panel {
+    background: $secondary;  /* Still orange from colors.tcss */
+    color: $text;  /* Still from colors.tcss */
+}
+
+.spaced-small {
+    margin: $spacing-small;  /* Local variable */
+}
+
+.spaced-medium {
+    margin: $spacing-medium;  /* Local variable */
+}
+
+.spaced-large {
+    margin: $spacing-large;  /* Local variable */
+}

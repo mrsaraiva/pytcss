@@ -75,6 +75,8 @@ public class TcssParserDefinition implements ParserDefinition {
             return new TcssVariableDeclaration(node);
         } else if (type == TcssElementTypes.VARIABLE_REFERENCE) {
             return new TcssVariableReference(node);
+        } else if (type == TcssElementTypes.INITIAL_KEYWORD_VALUE) {
+            return new TcssInitialKeyword(node);
         }
 
         // Default: generic PSI element

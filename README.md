@@ -21,16 +21,23 @@ Learn more at: https://textual.textualize.io/guide/CSS/
 ### Color System
 - Color previews in the gutter for all formats (hex, RGB, HSL, named colors)
 - Variable color resolution (shows colors for `$primary` references)
+- Cross-file variable resolution (use variables from any `.tcss` file in your project)
 - Opacity suffix support (`red 50%`, `#fff 80%`)
 - Color picker with format preservation
 - Python `CSS`/`DEFAULT_CSS` injection for inline TCSS
 
 ### Editor Experience
-- Code completion (properties, variables, color keywords)
+- Code completion with color preview icons (properties, variables, color keywords)
+- Smart `$` completion (auto-removes `$` for named colors, keeps it for variables)
+- Configurable completion behavior (Settings → Languages & Frameworks → Textual CSS)
+- Enum value completion for 15+ properties (display, layout, border, overflow, etc.)
+- Fuzzy suggestions for property name typos ("Did you mean...?")
+- Pseudo-class validation (all 19 valid pseudo-classes with error messages)
+- Grammar support for `!important` modifier and `initial` keyword
 - Live templates for common TCSS patterns
 - Structure view (outline of rules and variables)
 - Quick documentation on hover
-- Validation and diagnostics
+- Validation and diagnostics (including duplicate variable warnings)
 - Rename refactoring for variables
 
 ## Installation
@@ -97,7 +104,10 @@ tcss-pycharm-plugin/
 │   │   ├── psi/                           # Structured PSI elements (rules, properties, variables)
 │   │   ├── util/                          # VariableResolver and helpers
 │   │   ├── python/                        # Python CSS/DEFAULT_CSS injection
-│   │   ├── completion/                    # Code completion contributor
+│   │   ├── completion/                    # Code completion contributor, color icons
+│   │   ├── index/                         # File-based indexing for cross-file resolution
+│   │   ├── inspection/                    # Inspections (duplicate variables, etc.)
+│   │   ├── settings/                      # Plugin settings UI and persistence
 │   │   ├── structure/                     # Structure view
 │   │   ├── documentation/                 # Documentation provider
 │   │   ├── validation/                    # Annotator for diagnostics
@@ -116,6 +126,11 @@ tcss-pycharm-plugin/
 │       │   ├── plugin.xml                 # Plugin configuration
 │       │   └── liveTemplates/tcss.xml     # Live templates
 │       └── icons/                         # Plugin icons
+├── src/test/                              # Automated tests
+│   ├── java/io/textual/tcss/             # Test classes
+│   └── testData/                          # Test fixtures
+├── examples/                              # Example TCSS files
+├── docs/devel/                            # Development documentation
 ├── build.gradle.kts                       # Build configuration
 ├── settings.gradle.kts                    # Gradle settings
 └── README.md                              # This file
@@ -127,7 +142,7 @@ tcss-pycharm-plugin/
 - **Type selectors**: `Button`, `Static`, `Container`
 - **Class selectors**: `.success`, `.error`, `.disabled`
 - **ID selectors**: `#dialog`, `#sidebar`
-- **Pseudo-classes**: `:hover`, `:focus`, `:disabled`
+- **Pseudo-classes**: All 19 Textual pseudo-classes validated (`:hover`, `:focus`, `:active`, `:disabled`, `:light`, `:dark`, `:blur`, `:can-focus`, `:has-children`, `:first-child`, `:last-child`, `:odd-child`, `:even-child`, `:only-child`, `:focus-within`, `:inline`, `:inline-block`, `:vertical-scroll`, `:horizontal-scroll`)
 - **Combinators**: `>`, `~`, `+`
 - **Nesting selector**: `&`
 
@@ -138,7 +153,7 @@ $border: wide $primary;
 ```
 
 ### Properties
-All Textual CSS properties are supported including:
+115 Textual CSS properties supported, including:
 - Layout: `dock`, `width`, `height`, `align`, `display`
 - Styling: `background`, `color`, `border`, `text-style`
 - Grid: `grid-columns`, `grid-rows`, `grid-gutter`
@@ -189,7 +204,21 @@ This works automatically - no configuration needed!
 
 ## Roadmap
 
-### v1.0 (Complete)
+### v1.1 (Current)
+- Cross-file variable resolution (use variables from any `.tcss` file)
+- Color preview icons in autocomplete
+- Smart `$` completion (auto-removes for colors, keeps for variables)
+- Configurable completion behavior via settings page
+- Duplicate variable inspection with navigation
+- Performance optimizations for variable resolution
+- Automated testing framework
+- Grammar completeness: `!important` modifier and `initial` keyword support
+- Pseudo-class validation (19 pseudo-classes with fuzzy error suggestions)
+- Fuzzy property name suggestions for typos
+- Enum value completion for 15+ enumerated properties
+- Property catalog expansion (17 new properties, 115 total)
+
+### v1.0 (Released)
 - Color preview for static and computed/dynamic values
 - Python TCSS injection for `CSS` / `DEFAULT_CSS`
 - Opacity suffix support (`color: red 50%;`)
@@ -207,7 +236,8 @@ This works automatically - no configuration needed!
 
 ### Future Enhancements
 - Find usages for selectors (classes, IDs, type selectors)
-- Cross-file variable resolution
+- Unused variable detection
+- Invalid property value inspections
 - Enhanced error recovery in parser
 - Refactoring support for selectors
 

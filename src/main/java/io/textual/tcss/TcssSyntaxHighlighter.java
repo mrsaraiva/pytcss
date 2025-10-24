@@ -65,6 +65,13 @@ public class TcssSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey COLON =
             createTextAttributesKey("TCSS_COLON", DefaultLanguageHighlighterColors.DOT);
 
+    // Grammar completeness highlighting
+    public static final TextAttributesKey INITIAL_KEYWORD =
+            createTextAttributesKey("TCSS_INITIAL_KEYWORD", DefaultLanguageHighlighterColors.CONSTANT);
+
+    public static final TextAttributesKey IMPORTANT_MODIFIER =
+            createTextAttributesKey("TCSS_IMPORTANT_MODIFIER", DefaultLanguageHighlighterColors.METADATA);
+
     @NotNull
     @Override
     public Lexer getHighlightingLexer() {
@@ -112,6 +119,10 @@ public class TcssSyntaxHighlighter extends SyntaxHighlighterBase {
             return pack(PARENTHESES);
         } else if (tokenType.equals(TcssTokenTypes.COLON)) {
             return pack(COLON);
+        } else if (tokenType.equals(TcssTokenTypes.INITIAL_KEYWORD)) {
+            return pack(INITIAL_KEYWORD);
+        } else if (tokenType.equals(TcssTokenTypes.EXCLAMATION)) {
+            return pack(IMPORTANT_MODIFIER);
         }
         return TextAttributesKey.EMPTY_ARRAY;
     }

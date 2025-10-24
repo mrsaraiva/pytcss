@@ -245,6 +245,10 @@ public class TcssLexer extends LexerBase {
                 else if (lowerText.equals("auto")) {
                     tokenType = TcssTokenTypes.COLOR_KEYWORD;
                 }
+                // Check for "initial" keyword (special TCSS keyword for property reset)
+                else if (lowerText.equals("initial")) {
+                    tokenType = TcssTokenTypes.INITIAL_KEYWORD;
+                }
                 // Check for named colors
                 else if (NamedColors.isNamedColor(text)) {
                     tokenType = TcssTokenTypes.COLOR_KEYWORD;
@@ -314,6 +318,9 @@ public class TcssLexer extends LexerBase {
                 break;
             case '*':
                 tokenType = TcssTokenTypes.UNIVERSAL_SELECTOR;
+                break;
+            case '!':
+                tokenType = TcssTokenTypes.EXCLAMATION;
                 break;
             default:
                 tokenType = TcssTokenTypes.BAD_CHARACTER;
