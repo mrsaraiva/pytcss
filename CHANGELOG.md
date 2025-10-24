@@ -139,6 +139,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Implementation**: Zero-overhead static URL generation at build time
 - **Coverage**: ~15 properties show type documentation links (all COLOR, LENGTH, NUMBER properties plus special STRING types)
 
+#### Documentation Enhancements Phase 2 - Rich Property Documentation
+- **Comprehensive property documentation**: Property hover (Ctrl+Q) now shows Textual-quality documentation
+  - Formal syntax with type annotations
+  - CSS examples with comments
+  - Python API examples
+  - Related properties (see also)
+  - All extracted from official Textual documentation
+- **Enhanced enum completions**: Enum value completions show rich descriptions
+  - Before: "block — valid for display"
+  - After: "block — Display the widget as normal."
+- **Automated extraction**: Gradle task parses Textual markdown documentation at build time
+  - Extracts 5 documentation sections from `docs/styles/*.md`:
+    - Enum value descriptions from markdown tables
+    - Syntax definitions with type annotations
+    - CSS examples from CSS section code blocks
+    - Python examples from Python section code blocks
+    - Related properties from "See also" section links
+  - Generates `TcssPropertyDocumentation.java` with static documentation maps
+  - Task runs automatically during compilation (`compileJava` depends on it)
+- **Coverage**: 46 properties with rich documentation extracted
+  - Enum descriptions: 7 properties
+  - Syntax: 46 properties
+  - CSS examples: 46 properties
+  - Python examples: 46 properties
+  - See also: 15+ properties with related links
+- **Professional UX**: Documentation display includes:
+  - Property name + one-line description from catalog
+  - Value type indicator
+  - Syntax section with proper formatting
+  - CSS Examples section with highlighted comments
+  - Python section with API usage patterns
+  - See also section with related property names
+  - Type documentation link (for properties using CSS types)
+  - Property documentation link
+- **Zero runtime overhead**: All documentation is static constants compiled into the plugin
+
 ### Changed
 
 #### Performance Improvements
@@ -165,16 +201,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `CrossFileVariableTest`: Automated test suite
   - `TcssConstants`: Central registry for validation constants (10+ enum sets, fuzzy matching utility)
   - `TcssInitialKeyword`: PSI element for initial keyword
+  - `TcssCssTypeUrls`: Maps CSS types to documentation URLs
+  - `TcssPropertyDocumentation` (GENERATED): Comprehensive property documentation including syntax, CSS/Python examples, enum descriptions, and related properties
 - Enhanced classes:
   - `VariableResolver`: Added 3 cross-file resolution methods
   - `TcssVariableReference`: Updated to use cross-file resolution
   - `TcssAnnotator`: Cross-file validation support, pseudo-class validation, fuzzy property suggestions, !important highlighting
   - `TcssColorProvider`: Cross-file color resolution
-  - `TcssCompletionContributor`: Color icons, smart $ removal, settings integration, enum value completion, improved Ctrl+Space context detection
+  - `TcssCompletionContributor`: Color icons, smart $ removal, settings integration, enum value completion with rich descriptions, improved Ctrl+Space context detection
   - `TcssLexer`: Added EXCLAMATION, IMPORTANT_KEYWORD, INITIAL_KEYWORD tokens
   - `TcssParser`: Support for !important modifier and initial keyword
   - `TcssSyntaxHighlighter`: Distinct colors for !important (grey/METADATA) and initial (purple/CONSTANT)
-  - `TcssPropertyCatalog`: 17 new properties with metadata
+  - `TcssPropertyCatalog`: 17 new properties with metadata, auto-generated URLs for property and type documentation
+  - `TcssPropertyInfo`: Added dual URL support (property + type), getCssTypeName() static method
+  - `TcssDocumentationProvider`: Shows both property and type documentation links
+- Build enhancements:
+  - `generateTcssDocumentation` Gradle task: Comprehensive markdown parser that extracts syntax, CSS/Python examples, enum descriptions, and see-also links from Textual documentation, then generates Java code with static documentation maps
+  - `TcssDocumentationProvider`: Enhanced to show rich multi-section documentation with HTML escaping
 
 ## [1.0.0] - 2025-10-17
 

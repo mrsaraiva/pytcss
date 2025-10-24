@@ -58,6 +58,9 @@ temp_lab_repos/
 .agent_runs/
 *.agent.log
 
+# Textual documentation (auto-downloaded)
+misc/textual_docs/
+
 # Agent documentation
 Agent*.md
 CLAUDE*.md

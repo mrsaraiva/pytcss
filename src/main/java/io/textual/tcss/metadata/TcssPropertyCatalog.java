@@ -1,5 +1,7 @@
 package io.textual.tcss.metadata;
 
+import io.textual.tcss.metadata.generated.TcssAvailableProperties;
+import io.textual.tcss.metadata.generated.TcssCssTypeUrls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -143,8 +145,11 @@ public final class TcssPropertyCatalog {
                                  @NotNull String name,
                                  @NotNull String description,
                                  @NotNull TcssPropertyInfo.ValueType valueType) {
-        // Generate property-specific documentation URL
-        String propertyUrl = "https://textual.textualize.io/styles/" + name.replace("_", "-") + "/";
+        // Generate property-specific documentation URL only if documentation exists
+        String fileName = tcssNameToFileName(name);
+        String propertyUrl = TcssAvailableProperties.hasDocumentation(fileName)
+                ? "https://textual.textualize.io/styles/" + fileName + "/"
+                : null;
 
         // Determine CSS type and get type documentation URL
         String cssTypeName = TcssPropertyInfo.getCssTypeName(name, valueType);
@@ -173,5 +178,28 @@ public final class TcssPropertyCatalog {
             }
         }
         return result;
+    }
+
+    /**
+     * Converts a TCSS property name to its documentation filename.
+     * TCSS properties use dashes (e.g., "box-sizing") but documentation files use underscores (e.g., "box_sizing.md").
+     *
+     * @param tcssName the TCSS property name with dashes
+     * @return the filename with underscores
+     */
+    @NotNull
+    private static String tcssNameToFileName(@NotNull String tcssName) {
+        return tcssName.replace("-", "_");
+    }
+
+    /**
+     * Checks if a TCSS property has documentation available.
+     *
+     * @param propertyName the TCSS property name (e.g., "box-sizing", "background")
+     * @return true if documentation exists for this property
+     */
+    public static boolean hasDocumentation(@NotNull String propertyName) {
+        String fileName = tcssNameToFileName(propertyName);
+        return TcssAvailableProperties.hasDocumentation(fileName);
     }
 }

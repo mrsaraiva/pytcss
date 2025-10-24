@@ -22,6 +22,7 @@ import io.textual.tcss.TcssTokenTypes;
 import io.textual.tcss.constants.TcssConstants;
 import io.textual.tcss.metadata.TcssPropertyCatalog;
 import io.textual.tcss.metadata.TcssPropertyInfo;
+import io.textual.tcss.metadata.generated.TcssPropertyDocumentation;
 import io.textual.tcss.psi.TcssPropertyDeclaration;
 import io.textual.tcss.psi.TcssPropertyValue;
 import io.textual.tcss.psi.TcssRuleSet;
@@ -286,7 +287,7 @@ public class TcssCompletionContributor extends CompletionContributor {
     /**
      * Add enum value completions based on the current property being edited.
      * For properties with restricted value sets (e.g., display: block|grid|hidden),
-     * suggest the valid enum values.
+     * suggest the valid enum values with descriptions from Textual documentation.
      */
     private void addEnumValueSuggestions(@NotNull CompletionResultSet result,
                                          @NotNull TcssPropertyDeclaration declaration) {
@@ -301,9 +302,20 @@ public class TcssCompletionContributor extends CompletionContributor {
         }
 
         for (String value : validValues) {
-            result.addElement(LookupElementBuilder.create(value)
-                .withTypeText("enum value", true)
-                .withTailText(" — valid for " + propertyName, true));
+            // Try to get rich description from generated documentation
+            String description = TcssPropertyDocumentation.getEnumValueDescription(propertyName, value);
+
+            LookupElementBuilder element = LookupElementBuilder.create(value)
+                .withTypeText("enum value", true);
+
+            // Use rich description if available, otherwise fall back to generic message
+            if (description != null && !description.isEmpty()) {
+                element = element.withTailText(" — " + description, true);
+            } else {
+                element = element.withTailText(" — valid for " + propertyName, true);
+            }
+
+            result.addElement(element);
         }
     }
 }

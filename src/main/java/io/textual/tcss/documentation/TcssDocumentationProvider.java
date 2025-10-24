@@ -8,11 +8,13 @@ import com.intellij.psi.PsiManager;
 import io.textual.tcss.TcssTokenTypes;
 import io.textual.tcss.metadata.TcssPropertyCatalog;
 import io.textual.tcss.metadata.TcssPropertyInfo;
+import io.textual.tcss.metadata.generated.TcssPropertyDocumentation;
 import io.textual.tcss.psi.TcssPropertyDeclaration;
 import io.textual.tcss.psi.TcssRuleSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -62,6 +64,51 @@ public class TcssDocumentationProvider implements DocumentationProvider {
         builder.append("<h3>").append(info.getName()).append("</h3>");
         builder.append("<p>").append(info.getDescription()).append("</p>");
         builder.append("<p><b>Value type:</b> ").append(info.getValueType().name()).append("</p>");
+
+        // Show syntax if available
+        String syntax = TcssPropertyDocumentation.getSyntax(propertyName);
+        if (syntax != null && !syntax.isEmpty()) {
+            builder.append("<h4>Syntax</h4>");
+            builder.append("<pre>").append(syntax).append("</pre>");
+        }
+
+        // Show CSS examples if available
+        String cssExamples = TcssPropertyDocumentation.getCssExamples(propertyName);
+        if (cssExamples != null && !cssExamples.isEmpty()) {
+            builder.append("<h4>CSS Examples</h4>");
+            builder.append("<pre>").append(cssExamples).append("</pre>");
+        }
+
+        // Show Python examples if available
+        String pythonExamples = TcssPropertyDocumentation.getPythonExamples(propertyName);
+        if (pythonExamples != null && !pythonExamples.isEmpty()) {
+            builder.append("<h4>Python</h4>");
+            builder.append("<pre>").append(pythonExamples).append("</pre>");
+        }
+
+        // Show related properties (see also) if available
+        List<String> seeAlso = TcssPropertyDocumentation.getSeeAlso(propertyName);
+        if (!seeAlso.isEmpty()) {
+            builder.append("<h4>See also</h4>");
+            builder.append("<p>");
+            for (int i = 0; i < seeAlso.size(); i++) {
+                if (i > 0) builder.append(", ");
+                String relatedProp = seeAlso.get(i);
+                // Only create link if property has documentation
+                if (TcssPropertyCatalog.hasDocumentation(relatedProp)) {
+                    TcssPropertyInfo relatedInfo = TcssPropertyCatalog.get(relatedProp);
+                    if (relatedInfo != null && relatedInfo.getPropertyDocUrl() != null) {
+                        builder.append("<a href=\"").append(relatedInfo.getPropertyDocUrl()).append("\">").append(relatedProp).append("</a>");
+                    } else {
+                        builder.append(relatedProp);
+                    }
+                } else {
+                    // Show as plain text if no documentation
+                    builder.append(relatedProp);
+                }
+            }
+            builder.append("</p>");
+        }
 
         // Show type documentation link if available
         if (info.getTypeDocUrl() != null) {
