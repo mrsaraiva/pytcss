@@ -115,15 +115,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Full Ctrl+Space support with proper context detection (property name vs value)
   - Automatic completion as you type when PropertyValue PSI element exists
 
-#### Property Catalog Expansion (Continued)
-- **17 additional properties** added to catalog (now **115 total**, up from 98)
-  - **Enum properties** (4): `split`, `expand`, `text-wrap`, `text-overflow`
-  - **Directional properties** (4): `constrain-x`, `constrain-y`, `grid-gutter-horizontal`, `grid-gutter-vertical`
-  - **Numeric properties** (1): `line-pad`
-  - **Auto-color properties** (5): `auto-color`, `auto-border-title-color`, `auto-border-subtitle-color`, `auto-link-color`, `auto-link-color-hover`
-  - **Grid properties** (2): `grid-size-columns`, `grid-size-rows`
-  - **Transitions property** (1): `transitions` (STRING type)
-  - All new properties available in autocomplete, validation, and documentation
+#### Property Catalog Expansion
+- **Property catalog now complete** with **111 total properties** - full parity with Textual
+  - **Verification**: All properties from Textual's `styles.py` are accounted for
+  - **15 properties added in Phase 2**:
+    - **Enum properties** (4): `split`, `expand`, `text-wrap`, `text-overflow`
+    - **Directional properties** (4): `constrain-x`, `constrain-y`, `grid-gutter-horizontal`, `grid-gutter-vertical`
+    - **Numeric properties** (1): `line-pad`
+    - **Auto-color properties** (5): `auto-color`, `auto-border-title-color`, `auto-border-subtitle-color`, `auto-link-color`, `auto-link-color-hover`
+    - **Additional properties** (1): `grid-size-columns`
+  - All properties available in autocomplete, validation, and documentation
+
+#### Documentation Enhancements Phase 1 - Property & Type URLs
+- **Property-specific documentation URLs**: All 111 properties now link to their specific documentation pages
+  - Example: `background` → `https://textual.textualize.io/styles/background/`
+  - URLs automatically generated from property names
+- **CSS type documentation URLs**: Properties with complex types show additional type documentation link
+  - Properties with COLOR type → link to `css_types/color/` (explains hex, RGB, HSL formats)
+  - Properties with LENGTH type → link to `css_types/scalar/` (explains units: cells, fr, %, vw, vh, auto)
+  - Properties with border/hatch/keyline types → link to respective type documentation
+  - Example: Hovering over `background` shows links to BOTH property page AND color type documentation
+  - Example: Hovering over `width` shows links to BOTH property page AND scalar type documentation
+- **Implementation**: Zero-overhead static URL generation at build time
+- **Coverage**: ~15 properties show type documentation links (all COLOR, LENGTH, NUMBER properties plus special STRING types)
 
 ### Changed
 

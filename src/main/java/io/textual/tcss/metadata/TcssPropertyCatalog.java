@@ -143,7 +143,14 @@ public final class TcssPropertyCatalog {
                                  @NotNull String name,
                                  @NotNull String description,
                                  @NotNull TcssPropertyInfo.ValueType valueType) {
-        map.put(name.toLowerCase(Locale.US), new TcssPropertyInfo(name, description, valueType, "https://textual.textualize.io/guide/CSS/"));
+        // Generate property-specific documentation URL
+        String propertyUrl = "https://textual.textualize.io/styles/" + name.replace("_", "-") + "/";
+
+        // Determine CSS type and get type documentation URL
+        String cssTypeName = TcssPropertyInfo.getCssTypeName(name, valueType);
+        String typeUrl = cssTypeName != null ? TcssCssTypeUrls.getTypeUrl(cssTypeName) : null;
+
+        map.put(name.toLowerCase(Locale.US), new TcssPropertyInfo(name, description, valueType, propertyUrl, typeUrl));
     }
 
     @Nullable

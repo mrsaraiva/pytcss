@@ -62,8 +62,15 @@ public class TcssDocumentationProvider implements DocumentationProvider {
         builder.append("<h3>").append(info.getName()).append("</h3>");
         builder.append("<p>").append(info.getDescription()).append("</p>");
         builder.append("<p><b>Value type:</b> ").append(info.getValueType().name()).append("</p>");
-        if (info.getDocumentationUrl() != null) {
-            builder.append("<p><a href=\"").append(info.getDocumentationUrl()).append("\">Textual CSS documentation</a></p>");
+
+        // Show type documentation link if available
+        if (info.getTypeDocUrl() != null) {
+            builder.append("<p><a href=\"").append(info.getTypeDocUrl()).append("\">Textual CSS Type documentation ↗</a></p>");
+        }
+
+        // Show property documentation link
+        if (info.getPropertyDocUrl() != null) {
+            builder.append("<p><a href=\"").append(info.getPropertyDocUrl()).append("\">Textual CSS Property documentation ↗</a></p>");
         }
         return builder.toString();
     }
