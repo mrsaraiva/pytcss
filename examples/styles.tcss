@@ -1,0 +1,97 @@
+/* Main Stylesheet - Demonstrates Cross-File Features
+ *
+ * This file demonstrates:
+ * - Cross-file variable resolution (uses variables from variables.tcss)
+ * - Local variable shadowing (local $primary overrides global)
+ * - Duplicate variable detection ($primary declared in both files)
+ * - Go-to-definition (Ctrl+Click on variables)
+ * - Cross-file completion (type $ to see all variables)
+ * - Color gutter icons for cross-file variables
+ */
+
+/* DUPLICATE DECLARATION - You should see a WARNING here!
+ * This $primary conflicts with the one in variables.tcss */
+$primary: #007bff;
+
+/* LOCAL SHADOWING - This $accent is only visible in this file
+ * It shadows any global $accent that might exist */
+$accent: #6c757d;
+$highlight: #ffeb3b;
+
+/* ============================================================================
+ * Try These Features:
+ * ============================================================================
+ *
+ * 1. Ctrl+Click on $secondary below → jumps to variables.tcss
+ * 2. Type $ in a property value → see completion from both files
+ * 3. Hover over $success → see color preview from variables.tcss
+ * 4. Click warning on $primary above → see all declarations
+ */
+
+Screen {
+    background: $background;  /* From variables.tcss - hover to see color */
+    color: $text;             /* From variables.tcss */
+}
+
+Button {
+    background: $primary;     /* WARNING: Which $primary? (local wins) */
+    color: $text;             /* From variables.tcss */
+    border: solid $border;    /* From variables.tcss */
+    padding: $spacing-md;     /* From variables.tcss */
+}
+
+Button:hover {
+    background: $secondary;   /* From variables.tcss - Ctrl+Click to navigate */
+}
+
+Button:focus {
+    border: thick $accent;    /* Local variable from this file */
+}
+
+.success {
+    background: $success;     /* From variables.tcss - green */
+    color: $text;
+}
+
+.warning {
+    background: $warning;     /* From variables.tcss - yellow */
+    color: $background;
+}
+
+.error {
+    background: $error;       /* From variables.tcss - red */
+    color: $text;
+}
+
+.info {
+    background: $info;        /* From variables.tcss - cyan */
+    color: $text;
+}
+
+Panel {
+    background: $surface;     /* From variables.tcss */
+    color: $text;
+    border: solid $border;
+    padding: $spacing-lg;     /* From variables.tcss */
+}
+
+/* Nested Rules with Cross-File Variables */
+#dialog {
+    background: $surface;
+    border: heavy $primary;   /* Local $primary (blue #007bff) */
+    padding: $spacing-xl;
+
+    Button {
+        width: 1fr;
+        margin: $spacing-sm;
+
+        &.primary {
+            background: $primary;      /* Local $primary */
+            border: solid $highlight;  /* Local $highlight */
+        }
+
+        &.danger {
+            background: $error;        /* From variables.tcss */
+        }
+    }
+}

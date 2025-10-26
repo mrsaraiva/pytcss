@@ -1,0 +1,29 @@
+/* Shared Variables - Used across multiple files
+ *
+ * This file demonstrates:
+ * - Variable declarations with color preview
+ * - Cross-file variable resolution
+ * - Hover to see color values
+ */
+
+/* Color Variables */
+$primary: #0066cc;
+$secondary: #ff6600;
+$success: #28a745;
+$warning: #ffc107;
+$error: #dc3545;
+$info: #17a2b8;
+
+/* Layout Colors */
+$background: #1e1e1e;
+$surface: #2d2d2d;
+$text: #e0e0e0;
+$text-muted: #888888;
+$border: #404040;
+
+/* Spacing Variables */
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
