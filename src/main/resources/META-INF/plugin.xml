@@ -21,6 +21,19 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <h3>1.2.0</h3>
+    <ul>
+        <li><strong>Cross-File Variable Resolution</strong> - Variables from any .tcss file now work project-wide</li>
+        <li><strong>Enhanced Validation</strong> - Property value type checking, pseudo-class validation, fuzzy suggestions</li>
+        <li><strong>Grammar Completeness</strong> - Full support for !important and initial keyword</li>
+        <li><strong>Enum Value Completion</strong> - Context-aware completion for 15+ enumerated properties</li>
+        <li><strong>Property Catalog Expansion</strong> - 111 total properties (full Textual parity)</li>
+        <li><strong>Rich Documentation</strong> - Enhanced hover docs with syntax, CSS/Python examples, see-also links</li>
+        <li><strong>Color Preview Icons</strong> - Autocomplete shows colored icons for variables and named colors</li>
+        <li><strong>Plugin Settings</strong> - Configure completion behavior (Settings → Languages & Frameworks → Textual CSS)</li>
+    </ul>
+    <p>See full <a href="https://github.com/mrsaraiva/pytcss/blob/master/CHANGELOG.md">CHANGELOG</a> for details.</p>
+
     <h3>1.0.0</h3>
     <ul>
         <li>Initial release</li>
@@ -37,18 +50,18 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Plugin settings -->
         <applicationService
-            serviceImplementation="io.textual.tcss.settings.TcssPluginSettings"/>
+            serviceImplementation="org.msaraiva.pytcss.settings.TcssPluginSettings"/>
 
         <!-- Settings page -->
         <applicationConfigurable
             parentId="language"
-            instance="io.textual.tcss.settings.TcssSettingsConfigurable"
-            id="io.textual.tcss.settings"
+            instance="org.msaraiva.pytcss.settings.TcssSettingsConfigurable"
+            id="org.msaraiva.pytcss.settings"
             displayName="Textual CSS"/>
         <!-- Register .tcss file type -->
         <fileType 
             name="Textual CSS" 
-            implementationClass="io.textual.tcss.TcssFileType"
+            implementationClass="org.msaraiva.pytcss.TcssFileType"
             fieldName="INSTANCE" 
             language="TCSS"
             extensions="tcss"/>
@@ -56,48 +69,48 @@
         <!-- Register language -->
         <lang.parserDefinition 
             language="TCSS" 
-            implementationClass="io.textual.tcss.TcssParserDefinition"/>
+            implementationClass="org.msaraiva.pytcss.TcssParserDefinition"/>
         
         <!-- Syntax highlighter -->
         <lang.syntaxHighlighterFactory 
             language="TCSS" 
-            implementationClass="io.textual.tcss.TcssSyntaxHighlighterFactory"/>
+            implementationClass="org.msaraiva.pytcss.TcssSyntaxHighlighterFactory"/>
         
         <!-- Color settings page -->
         <colorSettingsPage
-            implementation="io.textual.tcss.TcssColorSettingsPage"/>
+            implementation="org.msaraiva.pytcss.TcssColorSettingsPage"/>
 
         <!-- Add icon for .tcss files -->
-        <iconProvider implementation="io.textual.tcss.TcssIconProvider"/>
+        <iconProvider implementation="org.msaraiva.pytcss.TcssIconProvider"/>
 
         <!-- Color preview and picker -->
-        <colorProvider implementation="io.textual.tcss.TcssColorProvider"/>
+        <colorProvider implementation="org.msaraiva.pytcss.TcssColorProvider"/>
 
         <!-- Line marker for 'auto' keyword -->
         <codeInsight.lineMarkerProvider
             language="TCSS"
-            implementationClass="io.textual.tcss.TcssAutoKeywordLineMarker"/>
+            implementationClass="org.msaraiva.pytcss.TcssAutoKeywordLineMarker"/>
 
         <!-- Python CSS/DEFAULT_CSS injection -->
-        <multiHostInjector implementation="io.textual.tcss.python.PythonTcssLanguageInjector"/>
+        <multiHostInjector implementation="org.msaraiva.pytcss.python.PythonTcssLanguageInjector"/>
 
         <!-- Completion contributor -->
         <completion.contributor
             language="TCSS"
-            implementationClass="io.textual.tcss.completion.TcssCompletionContributor"/>
+            implementationClass="org.msaraiva.pytcss.completion.TcssCompletionContributor"/>
 
         <!-- Structure view -->
         <lang.psiStructureViewFactory
             language="TCSS"
-            implementationClass="io.textual.tcss.structure.TcssStructureViewFactory"/>
+            implementationClass="org.msaraiva.pytcss.structure.TcssStructureViewFactory"/>
 
         <!-- Documentation provider -->
         <lang.documentationProvider
             language="TCSS"
-            implementationClass="io.textual.tcss.documentation.TcssDocumentationProvider"/>
+            implementationClass="org.msaraiva.pytcss.documentation.TcssDocumentationProvider"/>
 
         <!-- Live template context -->
-        <liveTemplateContext implementation="io.textual.tcss.templates.TcssTemplateContextType"/>
+        <liveTemplateContext implementation="org.msaraiva.pytcss.templates.TcssTemplateContextType"/>
 
         <!-- Live templates -->
         <defaultLiveTemplates file="liveTemplates/tcss"/>
@@ -105,13 +118,13 @@
         <!-- Validation annotator -->
         <annotator
             language="TCSS"
-            implementationClass="io.textual.tcss.validation.TcssAnnotator"/>
+            implementationClass="org.msaraiva.pytcss.validation.TcssAnnotator"/>
 
         <!-- Variable rename processor -->
-        <renamePsiElementProcessor implementation="io.textual.tcss.refactoring.TcssVariableRenameProcessor"/>
+        <renamePsiElementProcessor implementation="org.msaraiva.pytcss.refactoring.TcssVariableRenameProcessor"/>
 
         <!-- Variable index for cross-file resolution -->
-        <fileBasedIndex implementation="io.textual.tcss.index.TcssVariableIndex"/>
+        <fileBasedIndex implementation="org.msaraiva.pytcss.index.TcssVariableIndex"/>
 
         <!-- Duplicate variable inspection -->
         <localInspection
@@ -120,7 +133,7 @@
             groupName="TCSS"
             enabledByDefault="true"
             level="WARNING"
-            implementationClass="io.textual.tcss.inspection.TcssDuplicateVariableInspection"/>
+            implementationClass="org.msaraiva.pytcss.inspection.TcssDuplicateVariableInspection"/>
     </extensions>
 
     <actions>

@@ -37,7 +37,12 @@ Learn more at: https://textual.textualize.io/guide/CSS/
 - Live templates for common TCSS patterns
 - Structure view (outline of rules and variables)
 - Quick documentation on hover
-- Validation and diagnostics (including duplicate variable warnings)
+- Validation and diagnostics:
+  - Property value type validation (catches COLOR/NUMBER/LENGTH mismatches)
+  - Duplicate variable warnings
+  - Unknown property detection with fuzzy suggestions
+  - Undefined variable errors
+  - Pseudo-class validation (all 19 valid pseudo-classes)
 - Rename refactoring for variables
 
 ## Installation
@@ -217,6 +222,7 @@ This works automatically - no configuration needed!
 - Fuzzy property name suggestions for typos
 - Enum value completion for 15+ enumerated properties
 - Property catalog expansion (17 new properties, 115 total)
+- Property value type validation (COLOR vs NUMBER vs LENGTH vs ENUM)
 
 ### v1.0 (Released)
 - Color preview for static and computed/dynamic values
@@ -228,7 +234,7 @@ This works automatically - no configuration needed!
 - Variable rename refactoring (Shift+F6)
 - Go-to-declaration for variables (Ctrl+Click)
 - Find usages for variables (Alt+F7)
-- Validation and diagnostics:
+- Validation and diagnostics (v1.0):
   - Unknown property warnings
   - Undefined variable errors
   - Circular reference detection
@@ -237,7 +243,6 @@ This works automatically - no configuration needed!
 ### Future Enhancements
 - Find usages for selectors (classes, IDs, type selectors)
 - Unused variable detection
-- Invalid property value inspections
 - Enhanced error recovery in parser
 - Refactoring support for selectors
 

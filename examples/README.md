@@ -1,97 +1,172 @@
-# Cross-File Variable Resolution Examples
+# Textual CSS Plugin Examples
 
-These TCSS files demonstrate the cross-file variable resolution feature.
+Quick showcase of all plugin features. Open these files in PyCharm to see the plugin in action!
 
-## How to Test
+## Getting Started
 
-1. **Run the sandbox IDE**:
-   ```bash
-   ./gradlew runIde
-   ```
+1. **Install the plugin** - See installation instructions in the [main README](../README.md#installation)
+2. **Open this folder** in PyCharm: `File → Open → select examples/`
+3. **Open the TCSS files** to explore features
 
-2. **Open this `examples/` folder in the sandbox IDE**
+## Files Overview
 
-3. **Open all TCSS files** in the editor
+### variables.tcss
+**What**: Shared color and spacing variables used across files
+**Try**:
+- Hover over any variable to see color preview in tooltip
+- Notice gutter icons showing colors
 
-## Features to Test
+### styles.tcss
+**What**: Demonstrates cross-file variable resolution
+**Try**:
+- **Cross-file variables**: Uses variables from `variables.tcss`
+- **Go-to-definition**: Ctrl+Click on `$secondary` → jumps to `variables.tcss`
+- **Completion**: Type `$` to see variables from both files with source indicators
+- **Duplicate detection**: Notice WARNING on `$primary` (declared in both files)
+- **Local shadowing**: `$accent` is local to this file only
+- **Color gutter**: Hover over variables to see resolved colors
 
-### 1. Cross-File Color Previews
-- **Open**: `main.tcss`
-- **Look for**: Color gutter icons on lines with `$primary`, `$secondary`, etc.
-- **Expected**: You should see colored squares in the gutter even though the variables are defined in `colors.tcss`
-- **Try**: Click the color gutter icon to open the color picker
+### features.tcss
+**What**: Comprehensive v1.2 feature showcase
+**Demonstrates**:
+- Quick documentation (Ctrl+Q)
+- Property value type validation
+- Pseudo-class validation (19 valid classes)
+- Fuzzy property suggestions for typos
+- Enum value completion
+- !important modifier and initial keyword
+- All 111 supported properties
+- All color formats
 
-### 2. Go-to-Definition (Ctrl+Click)
-- **Open**: `main.tcss`
-- **Try**: Ctrl+Click on `$primary` on line 12
-- **Expected**: Should navigate to the declaration in `colors.tcss` (or show popup if duplicate)
-- **Try**: Ctrl+Click on `$accent` on line 32
-- **Expected**: Should navigate to `theme.tcss`
+### app.py
+**What**: Python CSS/DEFAULT_CSS injection
+**Try**: All TCSS features work inside Python `CSS` and `DEFAULT_CSS` strings
 
-### 3. Duplicate Variable Detection
-- **Open**: `colors.tcss` or `theme.tcss`
-- **Look at**: The `$primary` variable declaration in both files
-- **Expected**: Should see a **WARNING** highlight on both declarations
-- **Try**: Click on the warning, then click "Show all declarations of '$primary'"
-- **Expected**: A popup showing both files with `$primary` declarations
+## Key Features to Try
 
-### 4. Code Completion
-- **Open**: Any TCSS file (or create a new one)
-- **Type**: `Button { background: $`
-- **Expected**: Completion popup shows ALL variables from ALL files, with source file names:
-  - `$primary (colors.tcss)`
-  - `$primary (theme.tcss)`
-  - `$secondary (colors.tcss)`
-  - `$accent (theme.tcss)`
-  - `$spacing-small (layout.tcss)`
-  - etc.
+### 📚 Quick Documentation (NEW in v1.2!)
+Place cursor on any property name and press **Ctrl+Q** (or Cmd+J on Mac):
+- **Rich documentation** extracted from official Textual docs
+- **Formal syntax** with type annotations
+- **CSS examples** with inline comments
+- **Python examples** showing API usage
+- **See also** section with related properties
+- **Clickable links** to official Textual documentation
 
-### 5. Local Shadowing
-- **Open**: `layout.tcss`
-- **Look at**: Line 6 where `$primary: #ff0000;` is declared
-- **Look at**: Line 12 where `$primary` is used in `Container { background: $primary; }`
-- **Expected**: Gutter icon shows **RED** color (not blue from colors.tcss)
-- **Why**: Local variables shadow cross-file ones within the same file
+**Try it**: In `features.tcss`, press Ctrl+Q on `display`, `layout`, or `background`
 
-### 6. Undefined Variable Error
-- **Open**: Any TCSS file
-- **Type**: `Button { color: $nonexistent; }`
-- **Expected**: Red error highlighting on `$nonexistent` with message "Undefined variable 'nonexistent'"
+### 🎨 Color System
+- **Gutter icons**: Colored squares show resolved colors (even for variables!)
+- **Color picker**: Click gutter icon to edit colors interactively
+- **Formats**: Hex, RGB/RGBA, HSL/HSLA, named colors (150+), ANSI colors
+- **Opacity suffix**: `red 50%`, `#0066cc 70%`, `$primary 80%`
+- **Cross-file resolution**: Variables from other files show their colors
 
-## File Descriptions
+**Try it**: In `variables.tcss`, click any color gutter icon
 
-### `colors.tcss`
-Defines common color variables used throughout the project.
-- `$primary`: Blue (#0066cc)
-- `$secondary`: Orange (#ff6600)
-- `$success`, `$warning`, `$danger`: Status colors
-- `$background`, `$text`, `$border`: Layout colors
+### ✅ Validation & Error Detection
 
-### `theme.tcss`
-Defines theme-specific variables.
-- **`$primary`**: Blue (#007bff) - **DUPLICATE!** Also defined in colors.tcss
-- `$accent`: Gray
-- `$highlight`: Yellow
-- `$shadow`: Semi-transparent black
+#### Property Value Type Checking
+Validates that values match expected types (e.g., COLOR vs NUMBER).
+- **Example**: `background: 123` → ERROR: expects COLOR, got NUMBER
+- **Try it**: See `.type-validation` section in `features.tcss`
 
-### `main.tcss`
-Main stylesheet that **uses cross-file variables** from both `colors.tcss` and `theme.tcss`.
-All the `$variables` here are resolved across files.
+#### Pseudo-Class Validation
+All 19 valid TCSS pseudo-classes recognized; invalid ones show errors.
+- **Example**: `Button:hovr` → ERROR: "Did you mean ':hover'?"
+- **Try it**: See pseudo-class section in `features.tcss`
 
-### `layout.tcss`
-Demonstrates **local shadowing**.
-- Redefines `$primary` locally as RED
-- Within this file, `$primary` is red, not blue
-- Other cross-file variables like `$border` and `$secondary` still work normally
-- Defines local-only spacing variables
+#### Fuzzy Property Suggestions
+Typos in property names get helpful suggestions.
+- **Example**: `backgruond: blue` → "Did you mean 'background'?"
+- **Try it**: See `.fuzzy-test` section in `features.tcss`
 
-## Expected Behavior Summary
+### 💡 Code Completion
+Trigger with **Ctrl+Space**:
 
-| Feature | What to Look For |
-|---------|------------------|
-| **Cross-file colors** | Gutter icons show colors from other files |
-| **Go-to-definition** | Ctrl+Click navigates to declaration in other files |
-| **Duplicates** | WARNING on variables declared in multiple files |
-| **Completion** | All variables from all files shown with source file name |
-| **Local shadowing** | Local redefinitions override cross-file (see layout.tcss) |
-| **Undefined errors** | Red highlighting for variables that don't exist anywhere |
+#### Property Name Completion
+- Type `bac` → suggests `background` with description and type
+- Shows all 111 supported properties
+
+#### Enum Value Completion
+- After `display:` → suggests `block`, `grid`, `hidden`, `none`
+- Works for 15+ enumerated properties
+- **Try it**: In `features.tcss`, type `layout: ` then Ctrl+Space
+
+#### Variable Completion
+- Type `$` → shows all variables (local + cross-file) with color preview icons
+- Source file indicated: `$primary (variables.tcss)`
+- **Smart $ removal**: Type `$blu`, select `blue` → inserts `blue` (not `$blue`)
+
+#### Color Keyword Completion
+- Type `bl` → suggests `blue`, `black`, `blueviolet` with color preview icons
+- 150+ named colors supported
+
+### 🔗 Cross-File Variables
+Variables defined in one file work everywhere:
+- **Resolution**: `$primary` from `variables.tcss` works in `styles.tcss`
+- **Navigation**: Ctrl+Click on variable → jumps to declaration (even in other files)
+- **Completion**: Type `$` → see variables from all `.tcss` files in project
+- **Color preview**: Gutter icons show colors even for cross-file variables
+- **Local shadowing**: File-local variables override cross-file ones
+- **Duplicate detection**: WARNING when same variable declared in multiple files
+
+**Try it**: Open both `variables.tcss` and `styles.tcss` side by side
+
+### 🔧 Refactoring
+- **Rename**: Place cursor on variable, press **Shift+F6** → renames all references
+- **Find usages**: **Alt+F7** → shows all places variable is used
+- **Go to definition**: **Ctrl+Click** → jumps to variable declaration
+- **Works across files**: Renaming updates all files in project
+
+**Try it**: In `app.py`, press Shift+F6 on `$theme` variable
+
+### 🐍 Python Integration
+Full TCSS support in Python `CSS` and `DEFAULT_CSS` class variables:
+- All features work: syntax highlighting, colors, completion, validation
+- **Try it**: Open `app.py` and explore the CSS strings
+
+### 📖 Grammar Features
+- **!important modifier**: `background: blue !important;` (grey highlighting)
+- **initial keyword**: `padding: initial;` (purple highlighting)
+- Both work with all property types
+
+**Try it**: See `.grammar` section in `features.tcss`
+
+## Plugin Settings
+
+Configure completion behavior:
+
+**Settings → Languages & Frameworks → Textual CSS**
+- **Dollar prefix filtering**: Control whether `$` shows both variables and colors, or only variables
+
+## Feature Summary
+
+| Feature | File | How to Test |
+|---------|------|-------------|
+| Quick docs | features.tcss | Ctrl+Q on any property |
+| Color preview | variables.tcss | Hover over colors, see gutter icons |
+| Color picker | variables.tcss | Click gutter icon |
+| Cross-file variables | styles.tcss | Ctrl+Click on $secondary |
+| Variable completion | styles.tcss | Type $ and Ctrl+Space |
+| Duplicate detection | styles.tcss | See WARNING on $primary |
+| Type validation | features.tcss | See .type-validation section |
+| Pseudo-class validation | features.tcss | See :hovr error |
+| Fuzzy suggestions | features.tcss | See .fuzzy-test section |
+| Enum completion | features.tcss | Type display: and Ctrl+Space |
+| Python injection | app.py | All features in CSS strings |
+| Refactoring | app.py | Shift+F6 on $theme |
+
+## Documentation Links
+
+- **Textual CSS Guide**: https://textual.textualize.io/guide/CSS/
+- **Plugin Repository**: https://github.com/mrsaraiva/pytcss
+- **Report Issues**: https://github.com/mrsaraiva/pytcss/issues
+
+## Tips
+
+1. **Explore progressively**: Start with `variables.tcss`, then `styles.tcss`, then `features.tcss`
+2. **Use Ctrl+Q liberally**: Every property has rich documentation
+3. **Try the keyboard shortcuts**: They make editing much faster
+4. **Check the gutter**: Color icons and error markers appear there
+5. **Experiment**: The examples are meant to be edited and explored!

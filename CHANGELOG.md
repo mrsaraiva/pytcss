@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-10-25
+
 ### Added
 
 #### Cross-File Variable Resolution
@@ -278,4 +280,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Java: JDK 17 (source and target)
 - Plugin architecture: Custom PSI structure with proper semantic analysis
 
+[1.2.0]: https://github.com/mrsaraiva/pytcss/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/mrsaraiva/pytcss/releases/tag/v1.0.0

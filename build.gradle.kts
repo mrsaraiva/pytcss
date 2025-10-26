@@ -3,8 +3,8 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.10.0"
 }
 
-group = "io.textual"
-version = "1.1.0"
+group = "org.msaraiva"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -144,7 +144,7 @@ tasks {
         val docsBaseDir = file("misc/textual_docs/docs")
         val stylesDir = file("$docsBaseDir/styles")
         val cssTypesDir = file("$docsBaseDir/css_types")
-        val outputDir = file("src/main/java/io/textual/tcss/metadata/generated")
+        val outputDir = file("src/main/java/org/msaraiva/pytcss/metadata/generated")
         val outputFile = file("$outputDir/TcssPropertyDocumentation.java")
         val typeUrlsFile = file("$outputDir/TcssCssTypeUrls.java")
         val availablePropertiesFile = file("$outputDir/TcssAvailableProperties.java")
@@ -166,13 +166,19 @@ tasks {
             }
             println("Found ${availableCssTypes.size} CSS type documentation files")
 
-            // Scan styles directory to find available property documentation
-            // Store filenames AS-IS (with underscores) for accurate URL generation
-            val availableProperties = mutableSetOf<String>()
-            stylesDir.listFiles { file -> file.extension == "md" }?.forEach { mdFile ->
+            // Scan styles directory to find available property documentation (recursively)
+            // Store filename → relative path mapping for accurate URL generation
+            val availableProperties = mutableMapOf<String, String>()
+            fileTree(stylesDir) {
+                include("**/*.md")
+            }.forEach { mdFile ->
                 val fileName = mdFile.nameWithoutExtension
                 if (fileName != "_template" && fileName != "index") {
-                    availableProperties.add(fileName)
+                    // Calculate relative path from docs root
+                    val relativePath = mdFile.toRelativeString(docsBaseDir)
+                        .replace("\\", "/")  // Normalize path separators
+                        .removeSuffix(".md")  // Remove extension
+                    availableProperties[fileName] = relativePath
                 }
             }
             println("Found ${availableProperties.size} property documentation files")
@@ -200,8 +206,9 @@ tasks {
                 result = propertyLinkRegex.replace(result) { match ->
                     val linkText = match.groupValues[1]
                     val fileName = match.groupValues[2] // Keep filename as-is (with underscores)
-                    if (availableProperties.contains(fileName)) {
-                        """<a href="https://textual.textualize.io/styles/$fileName/">$linkText</a>"""
+                    val relativePath = availableProperties[fileName]
+                    if (relativePath != null) {
+                        """<a href="https://textual.textualize.io/$relativePath/">$linkText</a>"""
                     } else {
                         linkText // No link if documentation doesn't exist
                     }
@@ -210,8 +217,10 @@ tasks {
                 return result
             }
 
-            // Parse markdown files to extract all documentation sections
-            stylesDir.listFiles { file -> file.extension == "md" }?.forEach { mdFile ->
+            // Parse markdown files to extract all documentation sections (recursively)
+            fileTree(stylesDir) {
+                include("**/*.md")
+            }.forEach { mdFile ->
                 val propertyName = mdFile.nameWithoutExtension.replace("_", "-")
                 val content = mdFile.readText()
                 val docs = PropertyDocs()
@@ -294,7 +303,7 @@ tasks {
             typeUrlsFile.writeText(generateCssTypeUrlsClass(availableCssTypes))
             println("Generated TcssCssTypeUrls.java with ${availableCssTypes.size} CSS types")
 
-            // Generate available properties set
+            // Generate available properties map (filename → relative path)
             availablePropertiesFile.writeText(generateAvailablePropertiesClass(availableProperties))
             println("Generated TcssAvailableProperties.java with ${availableProperties.size} property filenames")
         }
@@ -319,7 +328,7 @@ fun escapeJavaString(str: String): String {
 fun generatePropertyDocumentationClass(propertyDocs: Map<String, PropertyDocs>): String {
     val builder = StringBuilder()
 
-    builder.appendLine("package io.textual.tcss.metadata.generated;")
+    builder.appendLine("package org.msaraiva.pytcss.metadata.generated;")
     builder.appendLine()
     builder.appendLine("import org.jetbrains.annotations.NotNull;")
     builder.appendLine("import org.jetbrains.annotations.Nullable;")
@@ -482,7 +491,7 @@ fun generatePropertyDocumentationClass(propertyDocs: Map<String, PropertyDocs>):
 fun generateCssTypeUrlsClass(availableTypes: Set<String>): String {
     val builder = StringBuilder()
 
-    builder.appendLine("package io.textual.tcss.metadata.generated;")
+    builder.appendLine("package org.msaraiva.pytcss.metadata.generated;")
     builder.appendLine()
     builder.appendLine("import org.jetbrains.annotations.Nullable;")
     builder.appendLine()
@@ -527,29 +536,30 @@ fun generateCssTypeUrlsClass(availableTypes: Set<String>): String {
     return builder.toString()
 }
 
-fun generateAvailablePropertiesClass(availableProperties: Set<String>): String {
+fun generateAvailablePropertiesClass(availableProperties: Map<String, String>): String {
     val builder = StringBuilder()
 
-    builder.appendLine("package io.textual.tcss.metadata.generated;")
+    builder.appendLine("package org.msaraiva.pytcss.metadata.generated;")
     builder.appendLine()
-    builder.appendLine("import java.util.HashSet;")
-    builder.appendLine("import java.util.Set;")
+    builder.appendLine("import java.util.HashMap;")
+    builder.appendLine("import java.util.Map;")
+    builder.appendLine("import org.jetbrains.annotations.Nullable;")
     builder.appendLine()
     builder.appendLine("/**")
     builder.appendLine(" * Generated by Gradle task 'generateTcssDocumentation' - DO NOT EDIT MANUALLY")
     builder.appendLine(" * <p>")
-    builder.appendLine(" * Contains filenames (with underscores) of properties that have documentation.")
-    builder.appendLine(" * Used to determine which properties should have clickable documentation links.")
+    builder.appendLine(" * Maps property filenames (with underscores) to their relative paths for documentation URLs.")
+    builder.appendLine(" * Used to generate correct documentation links including subdirectory structure.")
     builder.appendLine(" */")
     builder.appendLine("public final class TcssAvailableProperties {")
-    builder.appendLine("    private static final Set<String> AVAILABLE_PROPERTY_FILENAMES;")
+    builder.appendLine("    private static final Map<String, String> PROPERTY_PATHS;")
     builder.appendLine()
     builder.appendLine("    static {")
-    builder.appendLine("        AVAILABLE_PROPERTY_FILENAMES = new HashSet<>();")
+    builder.appendLine("        PROPERTY_PATHS = new HashMap<>();")
 
-    // Generate entries for each available property, sorted alphabetically
-    availableProperties.sorted().forEach { fileName ->
-        builder.appendLine("        AVAILABLE_PROPERTY_FILENAMES.add(\"$fileName\");")
+    // Generate entries for each available property, sorted alphabetically by filename
+    availableProperties.toSortedMap().forEach { (fileName, relativePath) ->
+        builder.appendLine("        PROPERTY_PATHS.put(\"$fileName\", \"$relativePath\");")
     }
 
     builder.appendLine("    }")
@@ -565,7 +575,18 @@ fun generateAvailablePropertiesClass(availableProperties: Set<String>): String {
     builder.appendLine("     * @return true if documentation exists for this property")
     builder.appendLine("     */")
     builder.appendLine("    public static boolean hasDocumentation(String fileName) {")
-    builder.appendLine("        return AVAILABLE_PROPERTY_FILENAMES.contains(fileName);")
+    builder.appendLine("        return PROPERTY_PATHS.containsKey(fileName);")
+    builder.appendLine("    }")
+    builder.appendLine()
+    builder.appendLine("    /**")
+    builder.appendLine("     * Gets the relative path for a property's documentation.")
+    builder.appendLine("     *")
+    builder.appendLine("     * @param fileName the property filename (with underscores, e.g., \"grid_columns\")")
+    builder.appendLine("     * @return the relative path (e.g., \"styles/grid/grid_columns\"), or null if no documentation")
+    builder.appendLine("     */")
+    builder.appendLine("    @Nullable")
+    builder.appendLine("    public static String getRelativePath(String fileName) {")
+    builder.appendLine("        return PROPERTY_PATHS.get(fileName);")
     builder.appendLine("    }")
     builder.appendLine("}")
 

@@ -1,0 +1,308 @@
+/* Comprehensive Feature Showcase
+ *
+ * This file demonstrates all major features of the Textual CSS plugin v1.2.
+ * Explore each section to see validation, completion, documentation, and more.
+ */
+
+/* ============================================================================
+ * 1. Quick Documentation (Ctrl+Q)
+ * ============================================================================
+ * Place cursor on any property name below and press Ctrl+Q to see:
+ * - Rich documentation from Textual docs
+ * - Formal syntax with type annotations
+ * - CSS and Python code examples
+ * - Related properties with clickable links
+ * - Links to official Textual documentation
+ */
+
+Screen {
+    /* Try Ctrl+Q on these properties: */
+    display: block;
+    layout: vertical;
+    background: blue;
+    padding: 1 2;
+    border: solid green;
+}
+
+/* ============================================================================
+ * 2. Color System
+ * ============================================================================
+ * All color formats show gutter icons. Click icons to open color picker.
+ */
+
+.colors {
+    /* Hex colors */
+    background: #333333;
+    color: #FF0000;
+
+    /* Named colors (150+ supported) */
+    border-color: red;
+    tint: seashell;
+    scrollbar-color: skyblue;
+
+    /* RGB/RGBA functions */
+    scrollbar-background: rgb(255, 128, 0);
+    link-color: rgba(0, 128, 255, 0.8);
+
+    /* HSL/HSLA functions */
+    link-color-hover: hsl(120, 100%, 50%);
+    color: hsla(240, 100%, 50%, 0.5);
+
+    /* Opacity suffix (works with named colors, hex, variables) */
+    background-tint: red 50%;
+    border-color: #0066cc 70%;
+
+    /* ANSI colors */
+    color: ansi_bright_blue;
+}
+
+/* ============================================================================
+ * 3. Property Value Type Validation
+ * ============================================================================
+ * The plugin validates that property values match expected types.
+ * ERROR: Red underline + gutter icon for type mismatches.
+ */
+
+.type-validation {
+    /* VALID: COLOR property with color value */
+    background: blue;
+
+    /* ERROR: COLOR property with NUMBER value */
+    color: 123;
+
+    /* VALID: LENGTH property with percentage */
+    width: 50%;
+
+    /* ERROR: LENGTH property with color */
+    height: red;
+
+    /* VALID: NUMBER property with number */
+    opacity: 0.5;
+
+    /* ERROR: NUMBER property with color */
+    layer: #FF0000;
+}
+
+/* ============================================================================
+ * 4. Pseudo-Class Validation
+ * ============================================================================
+ * All 19 valid TCSS pseudo-classes are recognized.
+ * Invalid pseudo-classes show errors with fuzzy suggestions.
+ */
+
+/* Valid pseudo-classes (no errors) */
+Button:hover { background: blue; }
+Button:focus { background: green; }
+Button:active { background: red; }
+Button:disabled { background: gray; }
+Button:light { background: white; }
+Button:dark { background: black; }
+Button:blur { background: yellow; }
+Button:can-focus { background: cyan; }
+Button:has-children { background: magenta; }
+Button:first-child { background: white; }
+Button:last-child { background: white; }
+Button:odd-child { background: white; }
+Button:even-child { background: white; }
+Button:only-child { background: white; }
+Button:focus-within { background: white; }
+Button:inline { background: white; }
+Button:inline-block { background: white; }
+Button:vertical-scroll { background: white; }
+Button:horizontal-scroll { background: white; }
+
+/* Invalid pseudo-class - shows ERROR with suggestion */
+Button:hovr { background: blue; }  /* Did you mean ':hover'? */
+
+/* ============================================================================
+ * 5. Fuzzy Property Suggestions
+ * ============================================================================
+ * Typos in property names get helpful "Did you mean...?" suggestions.
+ */
+
+.fuzzy-test {
+    backgruond: blue;    /* Did you mean 'background'? */
+    colr: red;           /* Did you mean 'color'? */
+    bordre: solid;       /* Did you mean 'border'? */
+    paddig: 0;           /* Did you mean 'padding'? */
+    wdith: 100%;         /* Did you mean 'width'? */
+}
+
+/* ============================================================================
+ * 6. Enum Value Completion
+ * ============================================================================
+ * Properties with restricted value sets show context-aware completion.
+ * Place cursor after colon and press Ctrl+Space to see valid values.
+ */
+
+.enum-completion {
+    /* display: block | grid | hidden | none */
+    display: ;
+
+    /* layout: grid | horizontal | stream| vertical */
+    layout: ;
+
+    /* overflow: auto | hidden | scroll */
+    overflow: ;
+
+    /* border: solid | dashed | double | round | thick | ... (19 styles) */
+    border: ;
+
+    /* text-align: start | end | left | right | center | justify */
+    text-align: ;
+
+    /* visibility: visible | hidden */
+    visibility: ;
+
+    /* position: relative | absolute */
+    position: ;
+}
+
+/* ============================================================================
+ * 7. Grammar Features: !important and initial
+ * ============================================================================
+ */
+
+.grammar {
+    /* !important modifier (different color) */
+    background: blue !important;
+    color: rgb(255, 0, 0) !important;
+    padding: 1 2 !important;
+
+    /* initial keyword (different color) - resets to default */
+    width: initial;
+    height: initial;
+    border: initial;
+
+    /* Combined: initial with !important */
+    margin: initial !important;
+}
+
+/* ============================================================================
+ * 8. Full Property Catalog (111 Properties)
+ * ============================================================================
+ * All 111 Textual CSS properties are supported with:
+ * - Autocomplete
+ * - Documentation (Ctrl+Q)
+ * - Type validation
+ * - Enum completion where applicable
+ */
+
+.all-properties {
+    /* Layout & Display */
+    display: block;
+    layout: vertical;
+    dock: top;
+    visibility: visible;
+    position: relative;
+
+    /* Sizing */
+    width: 50%;
+    height: auto;
+    min-width: 10;
+    max-width: 100;
+    min-height: 5;
+    max-height: 50;
+
+    /* Spacing */
+    margin: 1 2;
+    padding: 1 2 3 4;
+    offset: 0 0;
+
+    /* Colors */
+    background: blue;
+    color: white;
+    tint: rgba(255, 255, 255, 0.1);
+
+    /* Border & Outline */
+    border: solid green;
+    border-top: thick red;
+    border-right: dashed blue;
+    border-bottom: double yellow;
+    border-left: round white;
+    outline: ascii cyan;
+
+    /* Grid Layout */
+    grid-size: 3 2;
+    grid-rows: 1fr 2fr;
+    grid-columns: auto 1fr;
+    grid-gutter: 1 2;
+
+    /* Alignment */
+    align: center middle;
+    content-align: left top;
+    text-align: center;
+
+    /* Text */
+    text-style: bold italic;
+    text-opacity: 0.8;
+
+    /* Scrollbar */
+    scrollbar-background: #333;
+    scrollbar-color: #666;
+    scrollbar-size: 1 1;
+
+    /* Advanced */
+    opacity: 0.9;
+    layer: below;
+    layers: base overlay;
+    transitions: opacity 500ms;
+}
+
+/* ============================================================================
+ * 9. Completion Features
+ * ============================================================================
+ * Type to trigger completion:
+ * - Property names: type "bac" → suggests "background"
+ * - Enum values: type "display: b" → suggests "block"
+ * - Variables: type "$" → shows all variables with color icons
+ * - Colors: type "bl" → suggests "blue", "black", "blueviolet"
+ */
+
+.completion-demo {
+    /* Type partial property name to trigger completion */
+
+
+    /* After colon, type partial enum value */
+    display: ;
+
+    /* Type $ after the colon to see variable completion */
+    color: ;
+
+    /* Type color name to see color keyword completion with icons */
+
+}
+
+/* ============================================================================
+ * 10. Variable Features
+ * ============================================================================
+ */
+
+$demo-color: #FF6600;
+$demo-size: 24px;
+$chained: $demo-color;  /* Chained variable - resolves to orange */
+
+.variables {
+    background: $demo-color;   /* Shows color preview in gutter */
+    padding: $demo-size;       /* No color preview (not a color) */
+    color: $chained;           /* Shows resolved color (orange) */
+
+    /* Ctrl+Click on variable to jump to declaration */
+    /* Shift+F6 on variable to rename all references */
+}
+
+/* ============================================================================
+ * Summary
+ * ============================================================================
+ *
+ * Try these features:
+ * - Ctrl+Q: Quick documentation with examples and links
+ * - Ctrl+Space: Autocomplete (properties, enums, variables, colors)
+ * - Ctrl+Click: Go to definition (variables)
+ * - Shift+F6: Rename refactoring (variables)
+ * - Alt+F7: Find usages (variables)
+ * - Hover: See color previews, type info, documentation
+ * - Click gutter icon: Open color picker
+ *
+ * Settings: Settings → Languages & Frameworks → Textual CSS
+ */
